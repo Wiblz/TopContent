@@ -9,19 +9,29 @@ class Community(Base):
     id = Column(TEXT, primary_key=True)
     name = Column(TEXT)
     parsed = Column(Integer)
+    posts_day = Column(REAL)
+    active = Column(Boolean)
+    days = Column(Integer)
     avg_views = Column(REAL)
     avg_likes = Column(REAL)
     avg_reposts = Column(REAL)
-    avg_views_day = Column(REAL)
-    avg_likes_day = Column(REAL)
-    avg_reposts_day = Column(REAL)
-    posts_day = Column(Integer)
-    active = Column(Boolean)
+    avg_popularity = Column(REAL)
+
+    def __init__(self, id, name):
+        self.id = id
+        self.name = name
+        self.parsed = 0.0
+        self.posts_day = 0.0
+        self.active = True
+        self.days = 0
+        self.avg_views = 0.0
+        self.avg_likes = 0.0
+        self.avg_reposts = 0.0
+        self.avg_popularity = 0.0
 
     def __repr__(self):
-        return f'id: {self.id},\nname: {self.name},\nparsed: {self.parsed},\naverage views: ' \
-               f'{self.avg_views}\naverage likes: {self.avg_likes}\naverage reposts: ' \
-               f'{self.avg_reposts}\n\naverage views per day: ' \
-               f'{self.avg_views_day}\naverage likes per day: ' \
-               f'{self.avg_likes_day}\naverage reposts per day: {self.avg_reposts_day}\n' +\
+        return f'id: {self.id},\nname: {self.name},\nparsed: {self.parsed},\n'\
+               f'average views per day: {self.avg_views}\n' \
+               f'average likes per day: {self.avg_likes}\n' \
+               f'average reposts per day: {self.avg_reposts}\n' +\
                '-' * 30 + '\n'
