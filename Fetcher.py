@@ -1,3 +1,4 @@
+from datetime import datetime
 import time
 
 from configobj import ConfigObj
@@ -13,7 +14,9 @@ def get_api_obj():
     properties = ConfigObj('properties')
     vk_session = vk.Session(access_token=properties['access_token'])
 
-    return vk.API(vk_session, v=properties['vk_api_v'])
+    print(properties['vk_api_v'])
+    print(type(properties['vk_api_v']))
+    return vk.API(vk_session, v=properties['vk_api_v'], timeout=10000)
 
 
 def get_db_session():
@@ -35,6 +38,13 @@ def set_difference(community, post=None, post_list=None):
         post.popularity_diff = round(post.popularity - community.avg_popularity, 2)
 
 
+def put_header():
+    with open('output.txt', 'a') as f:
+        f.write('\n\n')
+        f.write(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        f.write('\n\n')
+
+
 def report(posts, community):
     if not posts:
         return
@@ -42,9 +52,6 @@ def report(posts, community):
     posts = sorted(posts, key=lambda x: x.popularity)
     posts = posts[:20]
     set_difference(community, post_list=posts)
-
-    if community.name == 'с каждым днем все радостнее жить':
-        print()
 
     num_width = 4 if len(posts) > 10 else 3
     url_width = max([len(post.url) for post in posts])
@@ -70,12 +77,14 @@ def report(posts, community):
 
 
 def daily_fetch(api, db_session):
+    put_header()
     SECONDS_IN_DAY = 86400
     TO_TIME = round(time.time()) - SECONDS_IN_DAY
     FROM_TIME = TO_TIME - SECONDS_IN_DAY
 
     for community in db_session.query(Community)\
                                .filter(Community.active == True):
+        print(community.id)
 
         seen = 0
         parsed = 0
@@ -85,8 +94,9 @@ def daily_fetch(api, db_session):
         outdated = False
         worthy_posts = []
         while not outdated:
+            print(seen)
             response = api.wall.get(domain=community.id, count=100, offset=seen)
-
+            print('OK!')
             posts = response["items"]
             if not posts:
                 break
