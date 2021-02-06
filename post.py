@@ -1,5 +1,5 @@
 class Post:
-    def __init__(self, id, likes, reposts, date, text, views, url=None, is_pinned=0):
+    def __init__(self, id, likes, reposts, date, text, views, attachments, url=None, is_pinned=0):
         self._id = id
         self._likes = likes
         self._reposts = reposts
@@ -8,6 +8,7 @@ class Post:
         self._views = views
         self._url = url
         self._is_pinned = is_pinned
+        self._attachments = attachments
         
         self._popularity = round(self._views/self._likes, 2)
 
@@ -46,3 +47,19 @@ class Post:
     @property
     def is_pinned(self):
         return self._is_pinned
+
+    @property
+    def attachments(self):
+        return self._attachments
+
+    def set_difference(self, community):
+        self.views_diff = round(self.views - community.avg_views, 2)
+        self.likes_diff = round(self.likes - community.avg_likes, 2)
+        self.reposts_diff = round(self.reposts - community.avg_reposts, 2)
+        self.popularity_diff = round(self.popularity - community.avg_popularity, 2)
+
+    def is_worthy(self, community):
+        return self.views > community.avg_views or\
+                self.likes > community.avg_likes or\
+                self.reposts > community.avg_reposts or\
+                self.popularity < community.avg_popularity
