@@ -14,6 +14,27 @@ from community import Community
 from post import Post
 
 
+def get_max_formatted_number_length(posts, attr):
+    try:
+        return max([len(format(getattr(post, attr), '+.2f')) for post in posts])
+    except ValueError:
+        print(f'No attribute {attr} in posts.')
+        return 0
+
+
+def get_max_str_length(posts, attr):
+    try:
+        return max([len(str(getattr(post, attr))) for post in posts])
+    except ValueError:
+        print(f'No attribute {attr} in posts.')
+        return 0
+
+
+def set_differences(community, post_list):
+    for post in post_list:
+        post.set_difference(community)
+
+
 class Fetcher:
     SECONDS_IN_DAY = 86400
     TO_TIME = round(time.time()) - SECONDS_IN_DAY
@@ -44,10 +65,6 @@ class Fetcher:
             f.write(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
             f.write('\n\n')
 
-    def set_difference(self, community, post_list):
-        for post in post_list:
-            post.set_difference(community)
-    
     def report(self, posts, community):
         if not posts:
             return
@@ -55,16 +72,16 @@ class Fetcher:
         posts = posts[:20]
 
         num_width = 4 if len(posts) > 10 else 3
-        url_width = max([len(post.url) for post in posts])
-        views_length = max([len(str(post.views)) for post in posts])
-        likes_length = max([len(str(post.likes)) for post in posts])
-        reposts_length = max([len(str(post.reposts)) for post in posts])
-        popularity_length = max([len(str(post.popularity)) for post in posts])
+        url_width = get_max_str_length(posts, 'url')
+        views_length = get_max_formatted_number_length(posts, 'views')
+        likes_length = get_max_formatted_number_length(posts, 'likes')
+        reposts_length = get_max_formatted_number_length(posts, 'reposts')
+        popularity_length = get_max_str_length(posts, 'popularity')
 
-        views_d_length = max([len(format(post.views_diff, '+.2f')) for post in posts])
-        likes_d_length = max([len(format(post.likes_diff, '+.2f')) for post in posts])
-        reposts_d_length = max([len(format(post.reposts_diff, '+.2f')) for post in posts])
-        popularity_d_length = max([len(format(post.popularity_diff, '+.2f')) for post in posts])
+        views_d_length = get_max_formatted_number_length(posts, 'views_diff')
+        likes_d_length = get_max_formatted_number_length(posts, 'likes_diff')
+        reposts_d_length = get_max_formatted_number_length(posts, 'reposts_diff')
+        popularity_d_length = get_max_formatted_number_length(posts, 'popularity_diff')
 
         with open(self.report_output, 'a') as f:
             f.write(f'{community.name} [{len(posts)}] -- {community.avg_views} views, {community.avg_likes} likes, {community.avg_reposts} reposts, {community.avg_popularity} popularity.\n')
@@ -80,7 +97,7 @@ class Fetcher:
         for post in worthy_posts:
             msg = []
             for a in filter(lambda a_: 'photo' in a_, post.attachments):
-                obj = {'type' : 'photo', 'media' : max(a['photo']['sizes'], key=lambda sz: sz['height'])['url']}
+                obj = {'type': 'photo', 'media': max(a['photo']['sizes'], key=lambda sz: sz['height'])['url']}
                 msg.append(obj)
             if msg:
                 caption = f'{post.url}\nPopularity: {post.popularity} ({post.popularity_diff:+.2f})\n\n{post.views} views ({post.views_diff:+.2f})\n{post.likes} likes ({post.likes_diff:+2f})\n{post.reposts} reposts ({post.reposts_diff:+.2f})'
@@ -100,11 +117,12 @@ class Fetcher:
                         'media': json.dumps(msg),
                         'disable_notification': True
                     })
+                time.sleep(0.5)
 
     def fetch(self):
         communities = self.db_session.query(Community).filter(Community.active == True)
         if not self.args.dry_run:
-            communities = communities.filter(or_(Community.last_fetched == None, (datetime.now() - timedelta(seconds=Fetcher.SECONDS_IN_DAY)) > Community.last_fetched))
+            communities = communities.filter(or_(Community.last_fetched is None, (datetime.now() - timedelta(seconds=Fetcher.SECONDS_IN_DAY)) > Community.last_fetched))
             self.put_header()
         
         for community in communities:
@@ -114,22 +132,22 @@ class Fetcher:
                 self.report(worthy_posts, community)
 
     def fetch_community(self, community):
-        self.seen = 0
+        seen = 0
         print(community.name)
         outdated = False
         post_objects = []
         
         while not outdated:
-            response = self.vk_api.wall.get(domain=community.id, count=100, offset=self.seen)
+            response = self.vk_api.wall.get(domain=community.id, count=100, offset=seen)
             posts = response["items"]
             if not posts:
                 break
 
-            self.seen += len(posts)
+            seen += len(posts)
             for post in filter(lambda p: not (
-                            ('is_pinned' in p and p['is_pinned'] == 1) or\
-                            p['date'] > Fetcher.TO_TIME or\
-                            'views' not in p or\
+                            ('is_pinned' in p and p['is_pinned'] == 1) or
+                            p['date'] > Fetcher.TO_TIME or
+                            'views' not in p or
                             p['marked_as_ads'] != 0), posts):
 
                 if post['date'] < Fetcher.FROM_TIME:
@@ -151,7 +169,7 @@ class Fetcher:
                 post_objects.append(post)
 
         worthy_posts = list(filter(lambda p: p.is_worthy(community), post_objects))
-        self.set_difference(community, post_list=worthy_posts)
+        set_differences(community, post_list=worthy_posts)
         print(len(worthy_posts), 'posts found!')
 
         if len(post_objects) > 0:
@@ -169,6 +187,7 @@ class Fetcher:
 
         return worthy_posts
 
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-d", "--dry_run",
@@ -178,6 +197,7 @@ def main():
     fetcher = Fetcher(args)
     fetcher.fetch()
     fetcher.db_session.close()
+
 
 if __name__ == '__main__':
     main()
