@@ -80,7 +80,7 @@ class Fetcher:
                 obj = {'type': 'photo', 'media': max(a['photo']['sizes'], key=lambda sz: sz['height'])['url']}
                 msg.append(obj)
             if msg:
-                caption = f'{post.url}\nPopularity: {post.popularity} ({post.popularity_diff:+.2f})\n\n{post.views} views ({post.views_diff:+.2f})\n{post.likes} likes ({post.likes_diff:+2f})\n{post.reposts} reposts ({post.reposts_diff:+.2f})'
+                caption = str(post)
                 if len(msg) == 1:
                     response = requests.get(self.tg_url_prefix_single, params={
                         'chat_id': self.chat_id,

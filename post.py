@@ -1,3 +1,6 @@
+from utils import format_number
+
+
 class Post:
     def __init__(self, id, likes, reposts, date, text, views, attachments, url=None, is_pinned=0):
         self._id = id
@@ -9,8 +12,8 @@ class Post:
         self._url = url
         self._is_pinned = is_pinned
         self._attachments = attachments
-        
-        self._popularity = round(self._views/self._likes, 2)
+
+        self._popularity = round(self._views / self._likes, 2)
 
     @property
     def id(self):
@@ -59,7 +62,15 @@ class Post:
         self.popularity_diff = round(self.popularity - community.avg_popularity, 2)
 
     def is_worthy(self, community):
-        return self.views > community.avg_views or\
-                self.likes > community.avg_likes or\
-                self.reposts > community.avg_reposts or\
-                self.popularity < community.avg_popularity
+        return self.views > community.avg_views or \
+               self.likes > community.avg_likes or \
+               self.reposts > community.avg_reposts or \
+               self.popularity < community.avg_popularity
+
+    def __str__(self):
+        return f'''{self.url}
+        Popularity: {self.popularity} ({format_number(self.popularity_diff)})
+        
+        {self.views} views ({format_number(self.views_diff)})
+        {self.likes} likes ({format_number(self.likes_diff)})
+        {self.reposts} reposts ({format_number(self.reposts_diff)}) '''
