@@ -12,27 +12,7 @@ from sqlalchemy.orm import sessionmaker
 
 from community import Community
 from post import Post
-
-
-def get_max_formatted_number_length(posts, attr):
-    try:
-        return max([len(format(getattr(post, attr), '+.2f')) for post in posts])
-    except ValueError:
-        print(f'No attribute {attr} in posts.')
-        return 0
-
-
-def get_max_str_length(posts, attr):
-    try:
-        return max([len(str(getattr(post, attr))) for post in posts])
-    except ValueError:
-        print(f'No attribute {attr} in posts.')
-        return 0
-
-
-def set_differences(community, post_list):
-    for post in post_list:
-        post.set_difference(community)
+from utils import get_max_str_length, get_max_formatted_number_length, set_differences
 
 
 class Fetcher:
