@@ -19,5 +19,25 @@ def set_differences(community, post_list):
         post.set_difference(community)
 
 
-def format_number(number):
-    return f'{"🔺" if number > 0 else "🔻"}{abs(number):.2f}'
+def format_number(number, inverse=False, small=False):
+    number = -number if inverse else number
+    prefix = "🔺" if number > 0 else "🔻"
+    a = abs(number)
+    if small:
+        return f'{prefix} {number:+.2f}'
+    else:
+        if a < 1000:
+            # convert to integer and keep the sign
+            return f'{prefix} {"+" if number > 0 else "-"}{round(a)}'
+        elif a < 100000:
+            # round to a number of thousands
+            return f'{prefix} {"+" if number > 0 else "-"}{round(a / 1000, 1)}k'
+        elif a < 1000000:
+            # round to a whole number of thousands
+            return f'{prefix} {"+" if number > 0 else "-"}{round(a / 1000)}k'
+        elif a < 100000000:
+            # round to a number of millions
+            return f'{prefix} {"+" if number > 0 else "-"}{round(a / 1000000, 1)}m'
+        else:
+            # round to a whole number of millions
+            return f'{prefix} {"+" if number > 0 else "-"}{round(a / 1000000)}m'

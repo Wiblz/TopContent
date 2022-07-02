@@ -69,8 +69,8 @@ class Post:
 
     def __str__(self):
         return f'''{self.url}
-        Popularity: {self.popularity} ({format_number(self.popularity_diff)})
-        
-        {self.views} views ({format_number(self.views_diff)})
-        {self.likes} likes ({format_number(self.likes_diff)})
-        {self.reposts} reposts ({format_number(self.reposts_diff)}) '''
+Popularity: {self.popularity} ({format_number(self.popularity_diff, inverse=True, small=True)})
+    
+{self.views} views ({format_number(self.views_diff)})
+{self.likes} likes ({format_number(self.likes_diff)})
+{self.reposts} reposts ({format_number(self.reposts_diff)}) '''

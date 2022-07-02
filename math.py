@@ -3,4 +3,4 @@ ALPHA = 2 / (N + 1)  # smoothing factor
 
 
 def EMA(prev_ema, new_avg):
-    return ALPHA * new_avg + (1 - ALPHA) * prev_ema
+    return ALPHA * new_avg + (1 - ALPHA) * prev_ema if prev_ema else new_avg
