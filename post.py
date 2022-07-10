@@ -18,7 +18,7 @@ class Post:
         self._is_pinned = is_pinned
         self._attachments = attachments
 
-        self._popularity = round(self._views / self._likes, 2)
+        self._popularity = round(self._likes / self._views, 2)
 
     @property
     def id(self):
@@ -78,7 +78,7 @@ class Post:
         return self.views > self.community.ema_views or \
                self.likes > self.community.ema_likes or \
                self.reposts > self.community.ema_reposts or \
-               self.popularity < self.community.ema_popularity
+               self.popularity > self.community.ema_popularity
 
     def to_db_representation(self):
         return DBPost(
@@ -95,7 +95,7 @@ class Post:
 
     def __str__(self):
         return f'{self.url}\n' \
-               f'Popularity: {self.popularity} ({format_number(self.popularity_diff, inverse=True, small=True)})\n' \
+               f'Popularity: {self.popularity} ({format_number(self.popularity_diff, small=True)})\n' \
                '\n' \
                f'{self.views} views ({format_number(self.views_diff)})\n' \
                f'{self.likes} likes ({format_number(self.likes_diff)})\n' \

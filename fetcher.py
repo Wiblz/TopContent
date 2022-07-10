@@ -50,7 +50,7 @@ class Fetcher:
                     datetime.now() - timedelta(seconds=Fetcher.SECONDS_IN_DAY)) > Community.last_fetched))
 
         for community in communities:
-            posts = sorted(self.fetch_community(community), key=lambda x: x.popularity)
+            posts = sorted(self.fetch_community(community), key=lambda x: -x.popularity)
             if posts:
                 worthy_posts.append((posts, community))
 
@@ -111,7 +111,7 @@ class Fetcher:
         if community.ema_views == 0 or community.ema_likes == 0:
             community.ema_popularity = 0.0
         else:
-            community.ema_popularity = round(community.ema_views / community.ema_likes, 2)
+            community.ema_popularity = round(community.ema_likes / community.ema_views, 2)
         community.avg_posts_per_day = round(
             (community.avg_posts_per_day * community.days + len(post_objects)) / (community.days + 1), 2)
         community.posts_fetched += len(post_objects)
