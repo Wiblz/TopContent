@@ -1,5 +1,4 @@
-
-from sqlalchemy import Column, TEXT, INTEGER, DATETIME, REAL, ForeignKey, BOOLEAN
+from sqlalchemy import Column, Text, INTEGER, DateTime, REAL, ForeignKey, BOOLEAN
 from sqlalchemy.orm import declarative_base
 
 from model.community import Community
@@ -10,8 +9,8 @@ Base = declarative_base()
 class Post(Base):
     __tablename__ = 'posts'
 
-    link = Column(TEXT, primary_key=True)
-    community_id = Column(INTEGER, ForeignKey(Community.id))
+    link = Column(Text, primary_key=True)
+    community_id = Column(Text, ForeignKey(Community.id))
 
     views = Column(INTEGER, default=0)
     likes = Column(INTEGER, default=0)
@@ -19,8 +18,8 @@ class Post(Base):
     popularity = Column(REAL, default=0.0)
 
     is_worthy = Column(BOOLEAN, default=False)
-    fetched_on = Column(DATETIME)
-    posted_on = Column(DATETIME)
+    fetched_on = Column(DateTime)
+    posted_on = Column(DateTime)
 
     # def __init__(self, link, community_id):
     #     self.link = link

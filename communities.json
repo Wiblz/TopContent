@@ -1,0 +1,32 @@
+{
+  "communities": [
+    {
+      "id": "holodok01",
+      "name": "с каждым днем все радостнее жить"
+    },
+    {
+      "id": "gorods",
+      "name": "Городские улицы"
+    },
+    {
+      "id": "gostevr",
+      "name": "Гостев"
+    },
+    {
+      "id": "octoberoctober",
+      "name": "Октябрь"
+    },
+    {
+      "id": "rus.court",
+      "name": "Эстетика русских дворов"
+    },
+    {
+      "id": "plattenbauten",
+      "name": "Панельки"
+    },
+    {
+      "id": "panelnoedostoyanie",
+      "name": "Панельное Достояние"
+    }
+  ]
+}

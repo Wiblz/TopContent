@@ -1,7 +1,6 @@
 import argparse
 from datetime import datetime, timedelta
 import json
-from functools import reduce
 
 import requests
 import time
@@ -12,6 +11,7 @@ from sqlalchemy import create_engine, or_
 from sqlalchemy.orm import sessionmaker
 
 from ema import EMA
+from helpers import _create_engine
 from model.community import Community
 from post import Post
 from utils import get_max_str_length, get_max_formatted_number_length, set_differences
@@ -30,12 +30,10 @@ class Fetcher:
         self.chat_id = self.properties["conversation_id"]
 
         # init vk api object
-        vk_session = vk.Session(access_token=self.properties['access_token'])
-        self.vk_api = vk.API(vk_session, v=self.properties['vk_api_v'], timeout=10000)
+        self.vk_api = vk.API(access_token=self.properties['access_token'], v=self.properties['vk_api_v'], timeout=10000)
 
         # init db session
-        engine = create_engine(
-            f'postgresql+psycopg2://{self.properties["db_user"]}:{self.properties["db_password"]}@{self.properties["db_host"]}:{self.properties.as_int("db_port")}/{self.properties["db_name"]}')
+        engine = _create_engine(self.properties)
         self.db_session = sessionmaker(bind=engine)()
 
         # init telegram
@@ -46,7 +44,7 @@ class Fetcher:
         communities = self.db_session.query(Community).filter(Community.active == True)
         worthy_posts = []
         if not self.args.dry_run:
-            communities = communities.filter(or_(Community.last_fetched is None, (
+            communities = communities.filter(or_(Community.last_fetched == None, (
                     datetime.now() - timedelta(seconds=Fetcher.SECONDS_IN_DAY)) > Community.last_fetched))
 
         for community in communities:
