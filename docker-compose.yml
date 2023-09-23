@@ -13,9 +13,10 @@ services:
       POSTGRES_USER: ubuntu
       POSTGRES_PASSWORD: pw_ubuntu
       POSTGRES_DB: top_content
-    ports:
-      - 5432:5432
   python:
-    build: ./docker
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+
     depends_on:
       - db

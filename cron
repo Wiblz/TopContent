@@ -1,1 +1,1 @@
-00 17 * * * cd /app && python ./fetcher.py >> ./log.log 2>&1
+00 13 * * * cd /app && /usr/local/bin/python /app/fetcher.py >> /app/log.log 2>&1

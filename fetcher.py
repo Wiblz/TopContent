@@ -219,6 +219,7 @@ class Fetcher:
 
 
 def main():
+    print('Starting fetcher')
     parser = argparse.ArgumentParser()
     parser.add_argument("-d", "--dry_run",
                         action="store_true")
