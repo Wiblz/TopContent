@@ -1,0 +1,12 @@
+certifi==2023.7.22
+charset-normalizer==3.2.0
+configobj==5.0.8
+greenlet==2.0.2
+idna==3.4
+psycopg2-binary==2.9.7
+requests==2.31.0
+six==1.16.0
+SQLAlchemy==2.0.21
+typing_extensions==4.8.0
+urllib3==2.0.5
+vk==3.0

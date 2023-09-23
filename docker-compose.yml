@@ -1,0 +1,21 @@
+version: '3.7'
+
+volumes:
+  pg_data:
+
+services:
+  db:
+    container_name: postgres
+    image: postgres:16
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ubuntu
+      POSTGRES_PASSWORD: pw_ubuntu
+      POSTGRES_DB: top_content
+    ports:
+      - 5432:5432
+  python:
+    build: ./docker
+    depends_on:
+      - db

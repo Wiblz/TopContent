@@ -1,0 +1,1 @@
+00 17 * * * cd /app && python ./fetcher.py >> ./log.log 2>&1
