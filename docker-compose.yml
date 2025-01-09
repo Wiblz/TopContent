@@ -1,22 +1,26 @@
-version: '3.7'
-
 volumes:
   pg_data:
 
 services:
   db:
     container_name: postgres
-    image: postgres:16
+    image: postgres
     volumes:
       - pg_data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: ubuntu
       POSTGRES_PASSWORD: pw_ubuntu
       POSTGRES_DB: top_content
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ubuntu"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
   python:
     build:
       context: .
       dockerfile: ./docker/Dockerfile
-
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+        restart: true
