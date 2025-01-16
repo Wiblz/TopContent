@@ -8,11 +8,11 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: ubuntu
-      POSTGRES_PASSWORD: pw_ubuntu
-      POSTGRES_DB: top_content
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ubuntu"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
       interval: 5s
       timeout: 5s
       retries: 5

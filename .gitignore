@@ -58,3 +58,4 @@ docs/_build/
 target/
 output.txt
 properties
+*.env
