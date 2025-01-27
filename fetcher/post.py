@@ -1,11 +1,11 @@
 from datetime import datetime, timezone
 from functools import cached_property
 
-from pydantic import BaseModel, Field, computed_field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, computed_field
 
-from src.model.community import Community
-from utils import format_number
-from model.post import Post as DBPost
+from fetcher.database.models import Community
+from fetcher.database.models import Post as DBPost
+from fetcher.utils import format_number
 
 
 class Post(BaseModel):
